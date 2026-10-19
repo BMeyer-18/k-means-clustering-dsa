@@ -11,6 +11,9 @@ class KMeans(val data: List<List<Double>>) {
      *
      */
     fun cluster(k: Int, initialCentroids: List<List<Double>> = pickRandomCentroids(k)): List<List<List<Double>>> {
+        if (k != initialCentroids.size)
+            throw IllegalArgumentException("Number of centroids is not equal to number of desired clusters")
+
         val clusters = (0..<k).map { mutableListOf<List<Double>>() }.toMutableList()
         var centroids = initialCentroids
 
@@ -87,7 +90,7 @@ class KMeans(val data: List<List<Double>>) {
      */
     private fun calculateCentroid(cluster: List<List<Double>>): List<Double> {
         if (cluster.isEmpty())
-            return data[0].indices.map { Double.POSITIVE_INFINITY }
+            return data[kotlin.random.Random.nextInt(data.size)]
         val centroid = data[0].indices.map { 0.0 }.toMutableList()
         for (i in cluster.indices)
             for (j in cluster[0].indices)
