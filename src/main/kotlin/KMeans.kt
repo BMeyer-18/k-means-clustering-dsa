@@ -8,7 +8,7 @@ package org.example
 class KMeans(val data: List<List<Double>>) {
 
     /**
-     *
+     * Categorize the data into [k] clusters based on the k-means clustering algorithm,
      */
     fun cluster(k: Int, initialCentroids: List<List<Double>> = pickRandomCentroids(k)): List<List<List<Double>>> {
         if (k != initialCentroids.size)
@@ -42,7 +42,7 @@ class KMeans(val data: List<List<Double>>) {
                 newCentroids.add(calculateCentroid(clusters[i]))
 
             // check convergence
-            println(centroids)
+            //println(centroids)
             if (areCentroidsEqual(centroids, newCentroids))
                 return clusters
             centroids = newCentroids
