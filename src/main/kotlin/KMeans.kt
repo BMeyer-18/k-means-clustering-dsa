@@ -12,14 +12,16 @@ class KMeans(val data: List<List<Double>>) {
     /**
      * Categorize the data into [k] clusters based on the k-means clustering algorithm,
      */
-    fun cluster(k: Int, initialCentroids: List<List<Double>> = pickRandomCentroids(k)): List<List<List<Double>>> {
+    fun cluster(k: Int, initialCentroids: List<List<Double>> = pickRandomCentroids(k)): Pair<List<List<List<Double>>>, Int> {
         if (k != initialCentroids.size)
             throw IllegalArgumentException("Number of centroids is not equal to number of desired clusters")
 
         val clusters = (0..<k).map { mutableListOf<List<Double>>() }.toMutableList()
         var centroids = initialCentroids
+        var iterations = 0
 
         while (true) {
+            iterations++
             // empty clusters
             for (i in clusters.indices)
                 clusters[i] = mutableListOf()
@@ -46,7 +48,7 @@ class KMeans(val data: List<List<Double>>) {
             // check convergence
             //println(centroids)
             if (areCentroidsEqual(centroids, newCentroids))
-                return clusters
+                return Pair(clusters, iterations)
             centroids = newCentroids
         }
     }
