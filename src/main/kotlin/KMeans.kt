@@ -1,5 +1,7 @@
 package org.example
 
+import kotlin.random.Random
+
 /**
  *
  * @property data a 2D list, in which each list is a data point and each item in the list is a
@@ -56,29 +58,85 @@ class KMeans(val data: List<List<Double>>) {
     fun pickRandomCentroids(k: Int): List<List<Double>> {
         val centroids = mutableListOf<List<Double>>()
         for (i in 0..<k)
-            centroids.add(data[kotlin.random.Random.nextInt(data.size)])
+            centroids.add(data[Random.nextInt(data.size)])
         return centroids
     }
 
     /**
-     *
+     * Picks [k] points from the data to use as initial centroids.
+     * The first is chosen randomly, and the rest are chosen based on a probability
+     * distribution proportional to the point's squared distance to the nearest centroid.
+     * This picks initial centroids further away from each other, helping runtime and accuracy.
+     * @return list of centroids, in which each centroid is a list of coordinates
      */
-    fun pickPlusPlusCentroids() {
+    fun pickPlusPlusCentroids(k: Int): List<List<Double>> {
+        // choose random point to be first centroid
+        val centroids = mutableListOf<List<Double>>()
+        centroids.add(data[Random.nextInt(data.size)])
 
+        // choose other k-1 centroids (points likely far from already-selected centroids)
+        while (centroids.size < k) {
+            // find all points' squared distance to closest centroid
+            val sqDists = mutableListOf<Double>()
+            for (point in data) {
+                var minDist = calculateDistance(point, centroids[0])
+                for (idx in 1..<centroids.size) {
+                    val dist = calculateDistance(point, centroids[idx])
+                    if (dist < minDist)
+                        minDist = dist
+                }
+                sqDists.add(minDist*minDist)
+            }
+
+            // Pick a random threshold between 0 and the sum of the squared distances, and iterate
+            // through squared distances, keeping a cumulative sum. When the cumulative sum
+            // exceeds the random threshold, choose that point as a centroid. This adds a random
+            // centroid based on a probability proportional to minimum squared distance.
+            val total = sqDists.sum()
+            val threshold = Random.nextDouble(total)
+            var cumulativeSum = 0.0
+            for (idx in data.indices) {
+                cumulativeSum += sqDists[idx]
+                if (cumulativeSum >= threshold) {
+                    centroids.add(data[idx])
+                    break
+                }
+            }
+        }
+
+        return centroids
+    }
+
+    /**
+     * Calculates the cost that k-means clustering attempts to minimize for a group of [clusters],
+     * which is the sum of squared distances from each point to its centroid.
+     * Divides by the number of points as a means of normalization.
+     * @return total cost of clustering
+     */
+    fun calculateCost(clusters: List<List<List<Double>>>): Double {
+        var sumSqDists = 0.0
+        for (cluster in clusters) {
+            val centroid = calculateCentroid(cluster)
+            for (point in cluster) {
+                val dist = calculateDistance(point, centroid)
+                sumSqDists += dist*dist
+            }
+        }
+        return sumSqDists/data.size.toDouble()
     }
 
     /**
      * @return the Euclidean distance between two points
-     * @param point a list of coordinates for a point
-     * @param centroid a list of coordinates for a centroid
+     * @param point1 a list of coordinates for a point
+     * @param point2 a list of coordinates for another point
      * @throws IllegalArgumentException if points have different numbers of coordinates
      */
-    private fun calculateDistance(point: List<Double>, centroid: List<Double>): Double {
-        if (point.size != centroid.size)
+    private fun calculateDistance(point1: List<Double>, point2: List<Double>): Double {
+        if (point1.size != point2.size)
             throw IllegalArgumentException("points have different numbers of coordinates")
         var distance = 0.0
-        for (i in point.indices) {
-            val coordDist = point[i]-centroid[i]
+        for (i in point1.indices) {
+            val coordDist = point1[i]-point2[i]
             distance += coordDist*coordDist
         }
         return kotlin.math.sqrt(distance)
@@ -90,7 +148,7 @@ class KMeans(val data: List<List<Double>>) {
      */
     private fun calculateCentroid(cluster: List<List<Double>>): List<Double> {
         if (cluster.isEmpty())
-            return data[kotlin.random.Random.nextInt(data.size)]
+            return data[Random.nextInt(data.size)]
         val centroid = data[0].indices.map { 0.0 }.toMutableList()
         for (i in cluster.indices)
             for (j in cluster[0].indices)
