@@ -10,3 +10,5 @@ for i = 1:length(indices)-1
     plot(x(indices(i)+1:indices(i+1)), y(indices(i)+1:indices(i+1)), '.', MarkerSize=20); hold on
 end
 axis equal
+title('Point Distribution')
+exportgraphics(gca, "plot_example.png")
