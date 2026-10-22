@@ -46,7 +46,6 @@ class KMeans(val data: List<List<Double>>) {
                 newCentroids.add(calculateCentroid(clusters[i]))
 
             // check convergence
-            //println(centroids)
             if (areCentroidsEqual(centroids, newCentroids))
                 return Pair(clusters, iterations)
             centroids = newCentroids

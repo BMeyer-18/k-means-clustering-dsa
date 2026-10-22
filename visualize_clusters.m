@@ -11,5 +11,5 @@ function visualize_clusters()
     end
     axis equal
     title('Point Distribution')
-    %exportgraphics(gca, "graphics/plot_example.png")
+    exportgraphics(gca, "graphics/plot_example.png")
 end

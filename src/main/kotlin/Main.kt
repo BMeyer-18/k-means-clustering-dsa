@@ -3,11 +3,12 @@ package org.example
 import java.io.File
 
 /**
- * Main function, for testing and getting data
+ * Main function, for running unit tests and recording data
  */
 fun main() {
+    testKMeans()
     // runClustering()
-    collectClusteringData()
+    // collectClusteringData()
 }
 
 /**

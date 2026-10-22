@@ -4,7 +4,7 @@ import kotlin.random.Random
 
 
 /**
- * Generates random clustered data, centered around a defined set of initial centroids.
+ * Generates random clustered data, centered around a defined set of 5 initial centroids.
  * Each centroid gets [points] points around it, which are up to [stagger] units away from
  * their respective centroid by Euclidean distance.
  * @return a list of data centered around the clusters
