@@ -7,8 +7,8 @@ import java.io.File
  */
 fun main() {
     testKMeans()
-    // runClustering()
-    // collectClusteringData()
+    runClustering()
+    collectClusteringData()
 }
 
 /**
